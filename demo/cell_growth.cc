@@ -79,6 +79,15 @@ void ParaviewXML::Output(const daosoa<Cell>& cells,
   vtu << "            </DataArray>" << std::endl;
   vtu << "         </Points>" << std::endl;
   vtu << "         <PointData>" << std::endl;
+  vtu << "            <DataArray type=\"Float64\" Name=\"Cell_ID\" NumberOfComponents=\"1\" format=\"ascii\">" << std::endl;
+  index = 0;
+  for (size_t i=0; i<num_vectors; i++) {
+    auto& cell = cells[i];
+    for (size_t j=0; j<cell.Size(); j++)
+      vtu << ' ' << index++ << std::flush;
+  }
+  vtu << std::endl;
+  vtu << "            </DataArray>" << std::endl;
   vtu << "            <DataArray type=\"Float64\" Name=\"Adherence\" NumberOfComponents=\"1\" format=\"ascii\">" << std::endl;
   for (size_t i=0; i<num_vectors; i++) {
     auto& cell = cells[i];
@@ -125,17 +134,17 @@ void ParaviewXML::Output(const daosoa<Cell>& cells,
   vtu << std::endl;
   vtu << "            </DataArray>" << std::endl;
   vtu << "         </PointData>" << std::endl;
-  vtu << "         <CellData>" << std::endl;
-  vtu << "            <DataArray type=\"Int32\" Name=\"cell_ID\" NumberOfComponents=\"1\" format=\"ascii\">" << std::endl;
-  index = 0;
-  for (size_t i=0; i<num_vectors; i++) {
-    auto& cell = cells[i];
-    for (size_t j=0; j<cell.Size(); j++)
-      vtu << ' ' << index++ << std::flush;
-  }
-  vtu << std::endl;
-  vtu << "            </DataArray>" << std::endl;
-  vtu << "         </CellData>" << std::endl;
+  // vtu << "         <CellData>" << std::endl;
+  // vtu << "            <DataArray type=\"Int32\" Name=\"cell_ID\" NumberOfComponents=\"1\" format=\"ascii\">" << std::endl;
+  // index = 0;
+  // for (size_t i=0; i<num_vectors; i++) {
+  //   auto& cell = cells[i];
+  //   for (size_t j=0; j<cell.Size(); j++)
+  //     vtu << ' ' << index++ << std::flush;
+  // }
+  // vtu << std::endl;
+  // vtu << "            </DataArray>" << std::endl;
+  // vtu << "         </CellData>" << std::endl;
   vtu << "         <Cells>" << std::endl;
   vtu << "            <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
   index = 0;
@@ -199,7 +208,7 @@ void execute(size_t cells_per_dim, size_t iterations, size_t threads,
       }
     }
     //
-    ParaviewXML pvd("Results4Paraview", 0, iterations);
+    ParaviewXML pvd("Results4Paraview", iterations, 1.0);
     // iterate for all (time) steps
     for (size_t i = 0; i < iterations; i++) {
       // 
